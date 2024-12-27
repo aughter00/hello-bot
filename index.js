@@ -3,6 +3,32 @@ require('dotenv').config();
 // Ctrl + K, C : Comment 주석 설정
 // Ctrl + K, U : UnComment 주석 해제
 
+const express = require('express');
+const expressApp = express();
+expressApp.use(express.json());
+expressApp.post('/discord', async (요청, 반응) => {
+    try {
+        const 바디 = 요청.body;
+        console.log(바디);
+
+        if (!바디.msg || 바디.msg.length == 0) {
+            return 반응.send({ resultMsg: '채널 메시지가 비어있으므로 기록할 수 없습니다.' });
+        }
+        
+        const 접속기록_채널ID = '1310902757649285170';
+        const 접속기록_채널 = await client.channels.fetch(접속기록_채널ID);
+        접속기록_채널.send(바디.msg);
+        return 반응.send({ resultMsg: '채널 메시지가 기록되었습니다.' });
+    } catch (에러내용) {
+        return 반응.send({ resultMsg: `알 수 없는 이유로 기록할 수 없습니다. (사유: ${에러내용})`});
+    }
+});
+
+const PORT = 3000;
+expressApp.listen(PORT, () => {
+    console.log(`Express App 시작됨: Port ${PORT}`);
+});
+
 const { Client, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({
